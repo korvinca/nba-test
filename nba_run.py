@@ -7,7 +7,9 @@ nba_runner
 '''
 
 import argparse
+import sys
 import csv
+import os.path
 from nba_utils import main_menu
 
 
@@ -18,7 +20,13 @@ parser.add_argument("-f", "--file", default=False,
 args = parser.parse_args()
 fpath = args.file
 
-# TODO fix break line verification in end of csv file on start.
+# Is file with data exist?
+if not os.path.exists(fpath):
+    print "No file with data."
+    sys.exit(1)
+
+# TODO fix the break line verification in the end of csv file on start.
+# Add break line in end of CSV file manually :( on start
 with open(fpath, 'a+') as csv_file:
     writer = csv.writer(csv_file, delimiter=',', dialect='excel')
     writer.writerow("")

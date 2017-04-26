@@ -81,8 +81,8 @@ def _player_stats(d):
         res = player_name.split(" ")[:-1]
         player_name = " ".join(map(str, res))
         if player_name in all_players:
-            player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
-            res = sort_by_stats(player_dic, stats=stat)
+            player_dic = _find_dic_in_file(d, "PLAYER FULL NAME", player_name)
+            res = _sort_by_stats(player_dic, stats=stat.upper())
             print player_name, stat + ":", res
         else:
             print "No players with name: %s" % player_name
@@ -90,8 +90,8 @@ def _player_stats(d):
             print "Available STAT values: %s" % " ".join(map(str, NBA_STATS))
     else:
         if player_name in all_players:
-            player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
-            res = sort_by_stats(player_dic)
+            player_dic = _find_dic_in_file(d, "PLAYER FULL NAME", player_name)
+            res = _sort_by_stats(player_dic)
             print player_name, " ".join(map(str, res))
             return res
         else:
@@ -100,7 +100,7 @@ def _player_stats(d):
             print "Available STAT value: %s" % " ".join(map(str, NBA_STATS))
 
 
-def sort_by_stats(player_dic, stats=None):
+def _sort_by_stats(player_dic, stats=None):
     """ Sort Player stats by order in request. """
     output = []
     if stats:
@@ -111,7 +111,7 @@ def sort_by_stats(player_dic, stats=None):
     return output
 
 
-def find_dic_in_file(d, key, value):
+def _find_dic_in_file(d, key, value):
     """ Get dictionary from CSV file. """
     for i, dic in enumerate(d):
         if dic[key] == value:
