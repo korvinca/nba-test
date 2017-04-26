@@ -7,21 +7,52 @@ nba_utils
 '''
 import csv
 
-NBA_OPTIONS = ["List of Players", "List of Teams", "Player stats",
-               "Add player", "Team", "STATS", "Quit"]
-
 NBA_STATS = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
              "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
 
-PARAMETRS = ["2017-2018 Playoffs", "04/26/2017", "C", "Antonio", "Miami", "H"]
-
-CONSTDATA = {"DATA SET": "2017-2018 Playoffs",
-             "DATE": "04/26/2017",
-             "POSITION": "C",
-             "OWN TEAM": "San Antonio",
-             "OPP TEAM": "Miami",
-             "Venue": "H",
+CONSTDATA = {"DATA SET": "",
+             "DATE": "",
+             "POSITION": "",
+             "OWN TEAM": "",
+             "OPP TEAM": "",
+             "Venue": "",
              "FTA": "0"}
+
+
+def _stats(d):
+    val = "FT"
+    output = []
+    for row in d:
+        v_search = val
+        count = row.get(v_search)
+        output.append(count)
+    return output
+
+
+def _stat_count(d, val):
+    req = _stats(d)
+    print req
+    print len(req)
+    if len(req) > 0:
+        if val is "max":
+            output = max(req)
+        elif val is "min":
+            output = min(req)
+            if output is None:
+                output = 0
+        elif val is "avg":
+            req = map(float, req)
+            output = round(sum(req) / float(len(req)), 1)
+        elif val is "median":
+            req = map(float, req)
+            req = sorted(req)
+            half, odd = divmod(len(req), 2)
+            if odd:
+                output = req[half]
+            output = (req[half - 1] + req[half]) / 2.0
+        print output
+    else:
+        print "No values"
 
 
 def _get_header(f):
@@ -46,7 +77,6 @@ def _add_player(f, h):
     player_stat.insert(0, player_name)
     new_dict = dict(zip(NBA_STATS, player_stat))
     new_dict.update(CONSTDATA)
-#    print new_dict
     for x in h:
         v = new_dict.get(x)
         new_string.append(v)
@@ -85,10 +115,8 @@ def _player_stats(d):
     if stat:
         res = player_name.split(" ")[:-1]
         player_name = " ".join(map(str, res))
-#        print player_name
         if player_name in all_players:
             player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
-#            print player_dic
             res = sort_by_stats(player_dic, stats=stat)
             print player_name, stat + ":", res
         else:
@@ -98,7 +126,6 @@ def _player_stats(d):
     else:
         if player_name in all_players:
             player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
-#            print player_dic
             res = sort_by_stats(player_dic)
             print player_name, " ".join(map(str, res))
             return res
@@ -174,13 +201,13 @@ def _check_name_with_stats(full_name):
         return None
 
 
-def _stats():
-    print "STATS"
-
-
 def _req_input(help_text):
     req = raw_input('Enter %s: ' % help_text)
     return req
+
+
+def _exit():
+    pass
 
 
 def main_menu(d):
@@ -240,65 +267,103 @@ def _stats_menu(d):
             _print_main_menu()
             exit
         elif choice == 1:
-            _stats()
+            _stats("FT")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 2:
-            _stats()
+            _stats("MIN")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 3:
-            _stats()
+            _stats("BL")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 4:
-            _stats()
+            _stats("3P")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 5:
-            _stats()
+            _stats("TOT")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 6:
-            _stats()
+            _stats("FG")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 7:
-            _stats()
+            _stats("3PA")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 8:
-            _stats()
+            _stats("DR")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 9:
-            _stats()
+            _stats("OR")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 10:
-            _stats()
+            _stats("TO")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 11:
-            _stats()
+            _stats("PF")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 12:
-            _stats()
+            _stats("PTS")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 13:
-            _stats()
+            _stats("FGA")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 14:
-            _stats()
+            _stats("A")
             is_valid_stat = 0
             _print_stats_menu()
         elif choice == 15:
-            _stats()
+            _stats("ST")
             is_valid_stat = 0
             _print_stats_menu()
+        else:
+            is_valid_stat = 0
+            print ("Invalid number. Try again...")
+
+
+def _stat_menu(d):
+    _print_stats_menu()
+    is_valid_stat = 0
+    while not is_valid_stat:
+        while not is_valid_stat:
+            try:
+                choice = int(raw_input('Enter your choice [0-5] : '))
+                is_valid_stat = 1
+            except ValueError, e:
+                print ("'%s' is not a valid integer." %
+                       e.args[0].split(": ")[1])
+        if choice == 0:
+            _print_stats_menu()
+            exit
+        elif choice == 1:
+            _stat_count("max")
+            is_valid_stat = 0
+            _print_stats_menu()
+        elif choice == 2:
+            _stat_count("min")
+            is_valid_stat = 0
+            _print_stats_menu()
+        elif choice == 3:
+            _stat_count("avg")
+            is_valid_stat = 0
+            _print_stats_menu()
+        elif choice == 4:
+            _stat_count("median")
+            is_valid_stat = 0
+            _print_stats_menu()
+        elif choice == 5:
+            _exit()
+            is_valid_stat = 0
         else:
             is_valid_stat = 0
             print ("Invalid number. Try again...")
@@ -321,7 +386,7 @@ def _print_main_menu():
 
 def _print_stats_menu():
     print (35 * '-')
-    print ("   N B A   S T A T   S E A R C H")
+    print ("   N B A   S T A T S   S E A R C H")
     print ("   S T A T S - M E N U")
     print (35 * '-')
     print ("0. << Go to MAIN MENU")
@@ -340,4 +405,18 @@ def _print_stats_menu():
     print ("13. FGA")
     print ("14. A")
     print ("15. ST")
+    print (35 * '-')
+
+
+def _print_stat_menu():
+    print (35 * '-')
+    print ("   N B A   S T A T   S E A R C H")
+    print ("   S T A T S - M E N U")
+    print (35 * '-')
+    print ("0. << Go to STATS MENU")
+    print ("1. Max")
+    print ("2. Min")
+    print ("3. Avg")
+    print ("4. Median")
+    print ("5. Quit")
     print (35 * '-')

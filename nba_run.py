@@ -2,7 +2,8 @@
 import csv
 import argparse
 from nba_utils import (main_menu, _full_player_name, _list_of_teams,
-                       _player_stats, _team, _add_player, _get_header)
+                       _player_stats, _team, _add_player, _get_header,
+                       _stats, _stat_count)
 
 
 desc = """Script performs NBA stats searching."""
@@ -12,13 +13,14 @@ parser.add_argument("-f", "--file", default=False,
 args = parser.parse_args()
 
 f = open(args.file)
-headers = _get_header(f)
-
+# headers = _get_header(f)
 reader = csv.DictReader(f)
 # headers = reader.fieldnames
 # Get list of dict with records
 record = csv.DictReader(f, delimiter=',')
 d = [x for x in record]
+val = "avg"
+_stat_count(d, val)
 # print d
 # _list_of_teams(d, for_print=True)
 # _team(d)
@@ -29,4 +31,4 @@ d = [x for x in record]
 f.close()
 
 
-_add_player(f=args.file, h=headers)
+# _add_player(f=args.file, h=headers)
