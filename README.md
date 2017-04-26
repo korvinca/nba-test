@@ -1,3 +1,3 @@
 # nba-test
 
-python nba_run.py -f nba.cvs
+python nba_run.py -f nba.csv
