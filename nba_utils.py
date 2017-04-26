@@ -5,12 +5,75 @@ nba_utils
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 '''
+import csv
 
 NBA_OPTIONS = ["List of Players", "List of Teams", "Player stats",
                "Add player", "Team", "STATS", "Quit"]
 
 NBA_STATS = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
              "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
+
+PARAMETRS = ["2017-2018 Playoffs", "04/26/2017", "C", "Antonio", "Miami", "H"]
+
+CONSTDATA = {"DATA SET": "2017-2018 Playoffs",
+             "DATE": "04/26/2017",
+             "POSITION": "C",
+             "OWN TEAM": "San Antonio",
+             "OPP TEAM": "Miami",
+             "Venue": "H",
+             "FTA": "0"}
+
+
+def _get_header(f):
+    reader = csv.reader(f)
+    headers = reader.next()
+#    print headers
+#    dict_clear = {}
+#    for h in headers:
+#        dict_clear[h] = ""
+#    print dict_clear
+    return headers
+
+
+def _add_player(f, h):
+    print "Add player:"
+#    new_player = _req_input("player name and STAT")
+    new_string = []
+    NBA_STATS.insert(0, "PLAYER FULL NAME")
+    new_player = "Ivan Korolevskiy 1.9 0 0 0 0 2 2 1 0 1 0 0 0 0 2"
+    player_name = " ".join(map(str, new_player.split()[:-15:]))
+    player_stat = new_player.split()[-15:]
+    player_stat.insert(0, player_name)
+    new_dict = dict(zip(NBA_STATS, player_stat))
+    new_dict.update(CONSTDATA)
+#    print new_dict
+    for x in h:
+        v = new_dict.get(x)
+        new_string.append(v)
+    print new_string
+    with open(f, 'ab') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(new_string)
+
+
+def _team(d):
+    print "Team:"
+    team_name = _req_input("team name")
+#    team_name = "Brooklyn"
+    if team_name in _list_of_teams(d):
+        own_team = "OWN TEAM"
+        opp_team = "OPP TEAM"
+        # TODO
+        for f in d:
+            if team_name in f.get(own_team):
+                player = f.get("PLAYER FULL NAME")
+                print player
+        for f in d:
+            if team_name in f.get(opp_team):
+                player = f.get("PLAYER FULL NAME")
+                print player
+    else:
+        print ("No team with name: %s" % team_name)
 
 
 def _player_stats(d):
@@ -55,8 +118,8 @@ def sort_by_stats(player_dic, stats=None):
     return output
 
 
-def find_dic_in_file(lst, key, value):
-    for i, dic in enumerate(lst):
+def find_dic_in_file(d, key, value):
+    for i, dic in enumerate(d):
         if dic[key] == value:
             return dic
     return -1
@@ -72,7 +135,7 @@ def _all_players(d):
     return output
 
 
-def _list_of_teams(d):
+def _list_of_teams(d, for_print=None):
     print "List of Teams:"
     output = []
     for row in d:
@@ -81,8 +144,11 @@ def _list_of_teams(d):
         name_of_team = row.get(own_team or opp_team)
         if name_of_team not in output:
             output.append(name_of_team)
-    for n in output:
-        print n
+    if for_print:
+        for n in output:
+            print n
+    else:
+        return output
 
 
 def _full_player_name(d, for_print=None):
@@ -106,14 +172,6 @@ def _check_name_with_stats(full_name):
         return stat
     else:
         return None
-
-
-def _add_player():
-    print "Add player:"
-
-
-def _team():
-    print "Team:"
 
 
 def _stats():
@@ -157,7 +215,6 @@ def main_menu(d):
             is_valid = 0
             _print_main_menu()
         elif choice == 6:
-            _stats()
             is_valid = 0
             _stats_menu(d)
         elif choice == 7:
