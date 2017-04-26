@@ -1,9 +1,14 @@
+#!/usr/local/bin/python2.7
+# encoding: utf-8
+'''
+nba_runner
+@author:     Ivan K.
+@contact:    ivan.korolevskiy@gmail.com
+'''
 
-import csv
 import argparse
-from nba_utils import (main_menu, _full_player_name, _list_of_teams,
-                       _player_stats, _team, _add_player, _get_header,
-                       _stats, _stat_count)
+import csv
+from nba_utils import main_menu
 
 
 desc = """Script performs NBA stats searching."""
@@ -11,24 +16,11 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument("-f", "--file", default=False,
                     required=True, help="Input file with NBA data")
 args = parser.parse_args()
+fpath = args.file
 
-f = open(args.file)
-# headers = _get_header(f)
-reader = csv.DictReader(f)
-# headers = reader.fieldnames
-# Get list of dict with records
-record = csv.DictReader(f, delimiter=',')
-d = [x for x in record]
-val = "avg"
-_stat_count(d, val)
-# print d
-# _list_of_teams(d, for_print=True)
-# _team(d)
-# _full_player_name(d)
-# _player_stats(d)
-# _list_of_teams(d)
-# main_menu(d)
-f.close()
+# TODO fix break line verification in end of csv file on start.
+with open(fpath, 'a+') as csv_file:
+    writer = csv.writer(csv_file, delimiter=',', dialect='excel')
+    writer.writerow("")
 
-
-# _add_player(f=args.file, h=headers)
+main_menu(fpath)
