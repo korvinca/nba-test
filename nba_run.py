@@ -2,6 +2,8 @@
 # encoding: utf-8
 '''
 nba_runner
+TODO fix the break line verification in the end of csv file on start.
+TODO Add verification for user and stats with adding user in CSV file.
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 '''
@@ -25,7 +27,7 @@ if not os.path.exists(fpath):
     print "No file with data."
     sys.exit(1)
 
-# TODO fix the break line verification in the end of csv file on start.
+
 # Add break line in end of CSV file manually :( on start
 with open(fpath, 'a+') as csv_file:
     writer = csv.writer(csv_file, delimiter=',', dialect='excel')
