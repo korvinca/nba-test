@@ -9,33 +9,49 @@ nba_utils
 NBA_OPTIONS = ["List of Players", "List of Teams", "Player stats",
                "Add player", "Team", "STATS", "Quit"]
 
-NBA_STATS = ["FT", "MIN", "BL", "3P", "Tot", "FG", "3PA",
+NBA_STATS = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
              "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
 
 
 def _player_stats(d):
     print "Player stats:"
-    player_name = _req_input("player name")
+    print ("Available STAT values: %s" % " ".join(map(str, NBA_STATS)))
+    player_name = _req_input("player name and STAT (optional)")
     all_players = _full_player_name(d)
-    if player_name in all_players:
-        player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
-        print player_dic
-        player_stat = _req_input("player stat (one optional value - %s" %
-                                (" ".join(map(str,NBA_STATS))))
-        if player_stat:
-            res = sort_by_stats(player_dic, stats=player_stat)
-            print player_name, player_stat + ":", res
+    stat = _check_name_with_stats(player_name)
+    if stat:
+        res = player_name.split(" ")[:-1]
+        player_name = " ".join(map(str, res))
+#        print player_name
+        if player_name in all_players:
+            player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
+#            print player_dic
+            res = sort_by_stats(player_dic, stats=stat)
+            print player_name, stat + ":", res
         else:
-            res = sort_by_stats(player_dic)
-            print player_name, " ".join(map(str,res))
+            print ("No players with name: %s" % player_name)
+            print "Check Player name and STAT (one from list below, optional)."
+            print ("Available STAT values: %s" % " ".join(map(str, NBA_STATS)))
     else:
-        print ("No players with name %s" % player_name)
+        if player_name in all_players:
+            player_dic = find_dic_in_file(d, "PLAYER FULL NAME", player_name)
+#            print player_dic
+            res = sort_by_stats(player_dic)
+            print player_name, " ".join(map(str, res))
+            return res
+        else:
+            print ("No players with name: %s" % player_name)
+            print "Check Player name and STAT (one from list below, optional)."
+            print ("Available STAT value: %s" % " ".join(map(str, NBA_STATS)))
 
 
-def sort_by_stats(player_dic, stats=NBA_STATS):
+def sort_by_stats(player_dic, stats=None):
     output = []
-    for i in stats:
-        output.append(player_dic.get(i))
+    if stats:
+        output = player_dic.get(stats)
+    else:
+        for i in NBA_STATS:
+            output.append(player_dic.get(i))
     return output
 
 
@@ -83,6 +99,15 @@ def _full_player_name(d, for_print=None):
         return output
 
 
+def _check_name_with_stats(full_name):
+    full_name = full_name.upper()
+    stat = full_name.split(" ")[-1]
+    if stat in NBA_STATS:
+        return stat
+    else:
+        return None
+
+
 def _add_player():
     print "Add player:"
 
@@ -94,15 +119,6 @@ def _team():
 def _stats():
     print "STATS"
 
-# def open_file(csv_file):
-#     try:
-#         with open(csv_file) as f:
-#             records = csv.DictReader(f)
-#             for row in records:
-#                 print row
-#         return records
-#     finally:
-#         f.close()
 
 def _req_input(help_text):
     req = raw_input('Enter %s: ' % help_text)
@@ -118,8 +134,8 @@ def main_menu(d):
                 choice = int(raw_input('Enter your choice [1-7] : '))
                 is_valid = 1
             except ValueError, e:
-                print ("'%s' is not a valid integer." % e.args[0].split(": ")[1])
-        ### Take action as per selected menu-option ###
+                print ("'%s' is not a valid integer." %
+                       e.args[0].split(": ")[1])
         if choice == 1:
             _full_player_name(d, for_print=True)
             is_valid = 0
@@ -148,7 +164,7 @@ def main_menu(d):
             print ("Goodbye!")
             exit
         else:
-            is_valid=0
+            is_valid = 0
             print ("Invalid number. Try again...")
 
 
@@ -161,8 +177,8 @@ def _stats_menu(d):
                 choice = int(raw_input('Enter your choice [0-15] : '))
                 is_valid_stat = 1
             except ValueError, e:
-                print ("'%s' is not a valid integer." % e.args[0].split(": ")[1])
-        ### Take action as per selected menu-option ###
+                print ("'%s' is not a valid integer." %
+                       e.args[0].split(": ")[1])
         if choice == 0:
             _print_main_menu()
             exit
@@ -227,7 +243,7 @@ def _stats_menu(d):
             is_valid_stat = 0
             _print_stats_menu()
         else:
-            is_valid_stat=0
+            is_valid_stat = 0
             print ("Invalid number. Try again...")
 
 
@@ -268,4 +284,3 @@ def _print_stats_menu():
     print ("14. A")
     print ("15. ST")
     print (35 * '-')
-
