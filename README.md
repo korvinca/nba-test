@@ -8,3 +8,4 @@ python nba_run.py -f nba.csv
 2. Fix the break line verification in the end of csv file on start.
 3. Add verification for user and stats with adding user in CSV file. The Stats reqest can be broken if Stat's value is null.
 4. Add log file with info/debug mode
+5. Handealing Mir/MIR and Tor/TOR
