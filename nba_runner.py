@@ -2,8 +2,6 @@
 # encoding: utf-8
 '''
 nba_runner
-TODO fix the break line verification in the end of csv file on start.
-TODO Add verification for user and stats with adding user in CSV file.
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 '''
@@ -16,15 +14,18 @@ from utils import initialize_logger
 
 
 def main(fpath):
-    """launch test"""
+    """test"""
     log.info("Starting script")
     log.debug(fpath)
-#    add_new_line_csv(fpath)
+    # To fix the break line verification in the end of csv file on start.
+    # Uncomment line below
+    # add_new_line_csv(fpath)
     statwork = NBAStats(fpath, log)
     statwork.main()
 
 
 def parse_arg():
+    """ Parsing -file *.CSV file. File should be located in the same dir."""
     desc = """Script performs NBA stats searching."""
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-f", "--file", default=False,
@@ -33,7 +34,7 @@ def parse_arg():
     fpath = args.file
     # Is file with data exist?
     if not os.path.exists(fpath):
-        log("No file with data.")
+        log.error("No file with data.")
         sys.exit(1)
     return fpath
 
