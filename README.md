@@ -1,6 +1,6 @@
 # TO RUN
 
-python nba_run.py -f nba.csv
+python nba_runner.py -f nba.csv
 
 # TODO
 
