@@ -2,7 +2,6 @@
 # encoding: utf-8
 '''
 utils
-TODO Create Class for initiate  variables
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 '''

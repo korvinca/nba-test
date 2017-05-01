@@ -10,35 +10,47 @@ import os
 import sys
 import csv
 import logging
+from datetime import datetime
 
 
 LOG_F = '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s: ' + '%(message)s'
 
 
-def initialize_logger(log_dir, logfilename, log_level):
+def initialize_logger(log_dir_name, logname, log_level):
     """Initialize logger."""
-    log = logging.getLogger()
-    log.setLevel(logging.INFO)
-    log_format = LOG_F
-    formatter = logging.Formatter(log_format)
-
-    handler_stream = logging.StreamHandler()
-    handler_stream.setFormatter(formatter)
-    handler_stream.setLevel(logging.INFO)
-    log.addHandler(handler_stream)
-
-    handler_file = logging.FileHandler(os.path.join(log_dir, logfilename))
-    handler_file.setFormatter(formatter)
-    log.addHandler(handler_file)
-    logging.captureWarnings(True)
-    log.setLevel(log_level)
-    return log
+    log_dir = os.path.join(os.getcwd(), log_dir_name)
+    try:
+        # Create directory
+        create_dir(log_dir)
+        log = logging.getLogger()
+        log.setLevel(logging.INFO)
+        log_format = LOG_F
+        formatter = logging.Formatter(log_format)
+        handler_stream = logging.StreamHandler()
+        handler_stream.setFormatter(formatter)
+        handler_stream.setLevel(logging.INFO)
+        log.addHandler(handler_stream)
+        handler = logging.FileHandler(os.path.join(log_dir, logname + "_" +
+                                                   getCurTime("%Y%m%d_%H-%M") +
+                                                   ".log"))
+        handler.setFormatter(formatter)
+        log.addHandler(handler)
+        logging.captureWarnings(True)
+        log.setLevel(log_level)
+        return log
+    except (OSError, IOError) as err:
+        # return False in case of exception
+        print "ERROR: Failed to create log: %s" % err
+        return False
 
 
 def create_dir(dpath):
-    if dpath:
-        return True
-    else:
+    try:
+        if not os.path.isdir(dpath):
+            os.makedirs(dpath)
+    except (OSError, IOError) as err:
+        # return -1 in case of exception
+        print "ERROR: Failed to create directory: %s" % err
         return False
 
 
@@ -80,3 +92,12 @@ def good_exit():
     """ Exit helper. """
     print "Goodbye!"
     sys.exit(0)
+
+
+def getCurTime(date_time_format):
+    """
+    Returns current date_time as a string formatted
+    according to date_time_format
+    """
+    date_time = datetime.now().strftime(date_time_format)
+    return date_time

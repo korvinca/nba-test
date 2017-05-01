@@ -40,6 +40,6 @@ def parse_arg():
 
 
 if __name__ == '__main__':
-    log = initialize_logger(".", "nba_test.log", "INFO")
+    log = initialize_logger("logs", "nba", "INFO")
     fpath = parse_arg()
     sys.exit(main(fpath))
