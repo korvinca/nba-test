@@ -1,10 +1,10 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
-'''
+"""
 nba_runner
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
-'''
+"""
 
 import argparse
 import sys

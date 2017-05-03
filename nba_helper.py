@@ -1,10 +1,11 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
-'''
+"""
 utils
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
-'''
+"""
+
 from utils import (good_exit, req_input, get_csv_reader, get_csv_writer,
                    get_csv_header)
 
@@ -20,7 +21,7 @@ CONSTDATA = {"DATA SET": "",
 
 
 class NBAStats(object):
-    '''Base class for DPC Services'''
+    """Base class for NBA app"""
     def __init__(self, fpath, log):
         self.log = log
         self.fpath = fpath

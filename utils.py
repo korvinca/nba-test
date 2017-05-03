@@ -1,11 +1,12 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
-'''
+"""
 nba_utils
 TODO Create Class for initiate  variables
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
-'''
+"""
+
 import os
 import sys
 import csv
@@ -31,7 +32,7 @@ def initialize_logger(log_dir_name, logname, log_level):
         handler_stream.setLevel(logging.INFO)
         log.addHandler(handler_stream)
         handler = logging.FileHandler(os.path.join(log_dir, logname + "_" +
-                                                   getCurTime("%Y%m%d_%H-%M") +
+                                                   get_cur_time("%Y%m%d_%H-%M") +
                                                    ".log"))
         handler.setFormatter(formatter)
         log.addHandler(handler)
@@ -39,12 +40,12 @@ def initialize_logger(log_dir_name, logname, log_level):
         log.setLevel(log_level)
         return log
     except (OSError, IOError) as err:
-        # return False in case of exception
         print "ERROR: Failed to create log: %s" % err
         return False
 
 
 def create_dir(dpath):
+    """ Create a directory if it is not exist. """
     try:
         if not os.path.isdir(dpath):
             os.makedirs(dpath)
@@ -61,6 +62,7 @@ def req_input(help_text):
 
 
 def get_csv_reader(fpath):
+    """Reader for CVS file """
     with open(fpath, 'r') as infile:
         reader = csv.DictReader(infile, delimiter=',')
         file_obj = [x for x in reader]
@@ -68,13 +70,14 @@ def get_csv_reader(fpath):
 
 
 def get_csv_writer(fpath, val, new_string):
+    """Writer for CVS file """
     with open(fpath, val) as infile:
         writer = csv.writer(infile, delimiter=',')
         writer.writerow(new_string)
 
 
 def add_new_line_csv(fpath):
-    # Add break line in end of CSV file manually :( on start
+    """Add break line in end of CSV file manually :( on start"""
     with open(fpath, 'a+') as csv_file:
         writer = csv.writer(csv_file, delimiter=',', dialect='excel')
         writer.writerow("")
@@ -94,7 +97,7 @@ def good_exit():
     sys.exit(0)
 
 
-def getCurTime(date_time_format):
+def get_cur_time(date_time_format):
     """
     Returns current date_time as a string formatted
     according to date_time_format

@@ -92,3 +92,8 @@ ENV/
 .project
 .pydevproject
 .settings
+
+
+# User-specific stuff:
+.idea/
+
