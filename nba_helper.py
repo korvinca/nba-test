@@ -21,8 +21,9 @@ CONSTDATA = {"DATA SET": "",
 
 
 class NBAStats(object):
-    """Base class for NBA app"""
+    """ Base class for NBA app"""
     def __init__(self, fpath, log):
+        """ Initiate variables. """
         self.log = log
         self.fpath = fpath
         self.stats = " ".join(map(str, NBA_STATS))
@@ -30,7 +31,12 @@ class NBAStats(object):
         self.main()
 
     def _add_player(self):
-        """ Add new Player in CSV file """
+        """
+        Add new Player in CSV file.
+
+        - awaiting input with player name and info about STATS
+        - add a new string with player info in csv file
+        """
         nba_stat_local = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
                           "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
         print "Enter player name and stats: %s" % self.stats
@@ -55,7 +61,12 @@ class NBAStats(object):
             print "No player name or incorrect stats."
 
     def _team(self):
-        """ Get lest of Players in the Team """
+        """
+        Get list of Players in the Team.
+
+        - awaiting input with team name
+        - print all player's names in the team
+        """
         team_name = req_input(help_text="name of Team")
         if team_name in self._list_of_teams():
             team = "OWN TEAM"
@@ -68,7 +79,12 @@ class NBAStats(object):
             print "No team with name: %s" % team_name
 
     def _player_stats(self):
-        """ Get Player status """
+        """
+        Get Player status
+
+        - awaiting input with player name and STAT (optional)
+        - print player names and stats
+        """
         print "Player stats:"
         print "Available STAT values: %s" % self.stats
         player_name = req_input(help_text="player name and STAT (optional)")
@@ -99,7 +115,7 @@ class NBAStats(object):
                 print "Available STAT value: %s" % self.stats
 
     def _sort_by_stats(self, player_dic, stats=None):
-        """ Sort Player stats by order in request. """
+        """ Helper. Sort Player stats by order in request. """
         output = []
         if stats:
             output = player_dic.get(stats)
@@ -113,7 +129,7 @@ class NBAStats(object):
         for i, dic in enumerate(self.csv):
             if dic[key] == value:
                 return dic
-        return -1
+        return False
 
     def _all_players(self):
         """ Get all Players Name. """
@@ -162,8 +178,6 @@ class NBAStats(object):
         stat = stat_and_name_in_upper.split(" ")[-1]
         if stat in NBA_STATS:
             return stat
-        else:
-            return None
 
     def _stats(self, stat):
         """ Put values in list of stat. """
@@ -180,30 +194,31 @@ class NBAStats(object):
     def _stat_count(self, stat, val):
         """ Method to handle min, max, avg and median requests for stat"""
         req = self._stats(stat)
-        if len(req) > 0:
-            if val is "max":
+        if req:
+            if val == "max":
                 output = max(req)
-            elif val is "min":
+            elif val == "min":
                 output = min(req)
                 if output is None:
                     output = 0
-            elif val is "avg":
+            elif val == "avg":
                 req = map(float, req)
                 output = round(sum(req) / float(len(req)), 1)
-            elif val is "median":
+            elif val == "median":
                 req = map(float, req)
                 req = sorted(req)
                 half, odd = divmod(len(req), 2)
                 if odd:
                     output = req[half]
-                output = (req[half - 1] + req[half]) / 2.0
+                else:
+                    output = (req[half - 1] + req[half]) / 2.0
             print "Output for %s of %s: %s" % (val, stat, output)
         else:
             print "No values"
 
     def main(self):
         """ Main Menu """
-        self.main_menu()
+        self.main_menu()  # Print menu
         is_valid = 0
         while not is_valid:
             while not is_valid:
@@ -244,8 +259,11 @@ class NBAStats(object):
 
     def _stats_menu(self):
         """ Sub menu for Main Menu with list of Stats. """
-        self.stats_menu()
+        self.stats_menu()  # Print menu
         is_valid_stats = 0
+        all_stats = {1: "FT", 2: "MIN", 3: "BL", 4: "3P", 5: "TOT", 6: "FG",
+                     7: "3PA", 8: "DR", 9: "OR", 10: "TO", 11: "PF", 12: "PTS",
+                     13: "FGA", 14: "A", 15: "ST"}
         while not is_valid_stats:
             while not is_valid_stats:
                 try:
@@ -255,46 +273,18 @@ class NBAStats(object):
                     print ("'%s' is not a valid integer." %
                            err.args[0].split(": ")[1])
             if choice == 0:
-                self.main_menu()
-            elif choice == 1:
-                self._stat_menu("FT")
-            elif choice == 2:
-                self._stat_menu("MIN")
-            elif choice == 3:
-                self._stat_menu("BL")
-            elif choice == 4:
-                self._stat_menu("3P")
-            elif choice == 5:
-                self._stat_menu("TOT")
-            elif choice == 6:
-                self._stat_menu("FG")
-            elif choice == 7:
-                self._stat_menu("3PA")
-            elif choice == 8:
-                self._stat_menu("DR")
-            elif choice == 9:
-                self._stat_menu("OR")
-            elif choice == 10:
-                self._stat_menu("TO")
-            elif choice == 11:
-                self._stat_menu("PF")
-            elif choice == 12:
-                self._stat_menu("PTS")
-            elif choice == 13:
-                self._stat_menu("FGA")
-            elif choice == 14:
-                self._stat_menu("A")
-            elif choice == 15:
-                self._stat_menu("ST")
+                self.main_menu()  # Go to main menu
+            elif choice in all_stats:
+                self._stat_menu(all_stats.get(choice))  # Go to stat
             elif choice == 16:
-                good_exit()
+                good_exit()  # Exit
             else:
                 is_valid_stats = 0
                 print "Invalid number. Try again..."
 
     def _stat_menu(self, stat):
         """ Sub menu for Stats Menu with list of count method. """
-        self.stat_menu()
+        self.stat_menu()  # Print menu
         is_valid_stat = 0
         while not is_valid_stat:
             while not is_valid_stat:
@@ -330,57 +320,42 @@ class NBAStats(object):
 
     @classmethod
     def main_menu(cls):
-        """ Print menu helper. """
+        """ Print menu menu. """
+        menu_list = ["1. List of Players", "2. List of Teams",
+                     "3. Player stats", "4. Add player", "5. Team",
+                     "6. STATS MENU >>", "7. Quit"]
         print 35 * '-'
         print "   N B A   S T A T   S E A R C H"
         print "   M A I N - M E N U"
         print 35 * '-'
-        print "1. List of Players"
-        print "2. List of Teams"
-        print "3. Player stats"
-        print "4. Add player"
-        print "5. Team"
-        print "6. STATS MENU >>"
-        print "7. Quit"
+        for i_val in menu_list:
+            print i_val
         print 35 * '-'
 
     @classmethod
     def stats_menu(cls):
-        """ Print menu helper. """
+        """ Print menu Stats. """
+        menu_list = ["0. << Go to MAIN MENU", "1. FT", "2. Min", "3. BL",
+                     "4. 3P", "5. Tot", "6. FG", "7. 3PA", "8. DR", "9. OR",
+                     "10. TO", "11. PF", "12. PTS", "13. FGA", "14. A",
+                     "15. ST", "16. Quit"]
         print 35 * '-'
         print "   N B A   S T A T S   S E A R C H"
         print "   S T A T S - M E N U"
         print 35 * '-'
-        print "0. << Go to MAIN MENU"
-        print "1. FT"
-        print "2. Min"
-        print "3. BL"
-        print "4. 3P"
-        print "5. Tot"
-        print "6. FG"
-        print "7. 3PA"
-        print "8. DR"
-        print "9. OR"
-        print "10. TO"
-        print "11. PF"
-        print "12. PTS"
-        print "13. FGA"
-        print "14. A"
-        print "15. ST"
-        print "16. Quit"
+        for i_val in menu_list:
+            print i_val
         print 35 * '-'
 
     @classmethod
     def stat_menu(cls):
-        """ Print menu helper. """
+        """ Print menu Stat. """
+        menu_list = ["0. << Go to STATS MENU", "1. Max", "2. Min", "3. Avg",
+                     "4. Median", "5. Quit"]
         print 35 * '-'
         print "   N B A   S T A T   S E A R C H"
         print "   S T A T  - M E N U"
         print 35 * '-'
-        print "0. << Go to STATS MENU"
-        print "1. Max"
-        print "2. Min"
-        print "3. Avg"
-        print "4. Median"
-        print "5. Quit"
+        for i_val in menu_list:
+            print i_val
         print 35 * '-'
