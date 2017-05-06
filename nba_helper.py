@@ -6,7 +6,7 @@ utils
 @contact:    ivan.korolevskiy@gmail.com
 """
 
-from utils import (good_exit, req_input, get_csv_reader, get_csv_writer,
+from utils import (good_exit, req_input, get_csv_reader, add_csv_string,
                    get_csv_header)
 
 NBA_STATS = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
@@ -34,7 +34,7 @@ class NBAStats(object):
         nba_stat_local = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
                           "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
         print "Enter player name and stats: %s" % self.stats
-        new_player = req_input("")
+        new_player = req_input(help_text="")
         if new_player:
             new_string = []
             nba_stat_local.insert(0, "PLAYER FULL NAME")
@@ -49,14 +49,14 @@ class NBAStats(object):
                 one_header = new_dict.get(header_items)
                 new_string.append(one_header)
             # Append a new player in csv file
-            get_csv_writer(self.fpath, 'a', new_string)
+            add_csv_string(fpath=self.fpath, val='a', new_string=new_string)
             print "Player %s has been added." % player_name
         else:
             print "No player name or incorrect stats."
 
     def _team(self):
         """ Get lest of Players in the Team """
-        team_name = req_input("name of Team")
+        team_name = req_input(help_text="name of Team")
         if team_name in self._list_of_teams():
             team = "OWN TEAM"
             print "Players in team %s:" % team_name
@@ -71,7 +71,7 @@ class NBAStats(object):
         """ Get Player status """
         print "Player stats:"
         print "Available STAT values: %s" % self.stats
-        player_name = req_input("player name and STAT (optional)")
+        player_name = req_input(help_text="player name and STAT (optional)")
         all_players = self._full_player_name()
         stat = self._check_name_with_stats(player_name)
         if stat:

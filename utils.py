@@ -1,7 +1,8 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
 """
-utils
+Utils
+
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 """
@@ -16,12 +17,11 @@ from datetime import datetime
 LOG_F = '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s: ' + '%(message)s'
 
 
-def initialize_logger(log_dir_name="logs", log_name="logname", log_level="INFO"):
+def initialize_logger(log_dir_name="logs", log_name="log", log_level="INFO"):
     """
     Initialize logger.
-    
-    Parameters
-    ----------
+
+    Parameters :
     log_dir_name : str
         Name of directory for *.log files. Default is "logs"
     log_name : str
@@ -29,8 +29,7 @@ def initialize_logger(log_dir_name="logs", log_name="logname", log_level="INFO")
     log_level : str
         Log level. Default is "INFO"
 
-    Returns
-    -------
+    Returns :
     object
         Log file as object for add the events.
     """
@@ -46,9 +45,8 @@ def initialize_logger(log_dir_name="logs", log_name="logname", log_level="INFO")
         handler_stream.setFormatter(formatter)
         handler_stream.setLevel(logging.INFO)
         log.addHandler(handler_stream)
-        handler = logging.FileHandler(os.path.join(log_dir,
-                                                   log_name + "_" +
-                                                   get_cur_time("%Y%m%d_%H-%M") + ".log"))
+        full_log_name = log_name + "_" + get_cur_time("%Y%m%d_%H-%M") + ".log"
+        handler = logging.FileHandler(os.path.join(log_dir, full_log_name))
         handler.setFormatter(formatter)
         log.addHandler(handler)
         logging.captureWarnings(True)
@@ -63,13 +61,11 @@ def create_dir(dpath=None):
     """
     Create a directory if it is not exist.
 
-    Parameters
-    ----------
+    Parameters :
     dpath : str
         Full directory path in unix format
 
-    Returns
-    -------
+    Returns :
     False if Directory exist or cannot be created
     """
     if dpath:
@@ -83,19 +79,17 @@ def create_dir(dpath=None):
             return False
 
 
-def req_input(help_text):
+def req_input(help_text=None):
     """
-    Input handler. 
+    Input handler.
 
-    Parameters
-    ----------
+    Parameters :
     help_text : str
         The text wil be printed as help to input.
 
-    Returns
-    -------
+    Returns :
     objreq : value
-        variable from input. 
+        variable from input.
     """
     req = raw_input('Enter %s: ' % help_text)
     return req
@@ -103,59 +97,85 @@ def req_input(help_text):
 
 def get_csv_reader(fpath):
     """
-    Reader for CVS file
+    Reader for CVS file.
 
-    Parameters
-    ----------
+    Parameters :
     fpath : str
         Path to csv file.
 
-    Returns
-    -------
-    object : str 
-        body of csv file by string spited by ','
+    Returns :
+    object : str
+        body of csv file by strings spited by ','
     """
-    with open(fpath, 'r') as infile:
-        reader = csv.DictReader(infile, delimiter=',')
-        file_obj = [x for x in reader]
-    return file_obj
+    try:
+        with open(fpath, 'r') as infile:
+            reader = csv.DictReader(infile, delimiter=',')
+            file_obj = [x for x in reader]
+        return file_obj
+    except (OSError, IOError) as err:
+        print "ERROR: Failed to read CSV file: %s" % err
+        return False
 
 
-def get_csv_writer(fpath, val, new_string):
+def add_csv_string(fpath, val="a", new_string=""):
     """
     Write to the CVS file a new string.
 
-    Parameters
-    ----------
+    Parameters :
     fpath : str
         Path to csv file.
     val : str
         'a' for append, 'b', or 'ab'
     new_string : str
         New string
-
-    Returns
-    -------
-        Write a new string and close the file.
     """
-    with open(fpath, val) as infile:
-        writer = csv.writer(infile, delimiter=',')
-        writer.writerow(new_string)
+    try:
+        with open(fpath, val) as infile:
+            writer = csv.writer(infile, delimiter=',')
+            writer.writerow(new_string)
+    except (OSError, IOError) as err:
+        print "ERROR: Failed to add string in CSV file: %s" % err
+        return False
 
 
-def add_new_line_csv(fpath):
-    """Add break line in end of CSV file manually :( on start"""
-    with open(fpath, 'a+') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',', dialect='excel')
-        writer.writerow("")
+def get_csv_writer(fpath):
+    """
+    Write to the CVS file.
+
+    Parameters :
+    fpath : str
+        Path to csv file.
+    Return :
+    writer : object
+    """
+    try:
+        with open(fpath, 'w') as csv_file:
+            writer = csv.writer(csv_file, delimiter=',')
+        return writer
+    except (OSError, IOError) as err:
+        print "ERROR: Failed to get writer for CSV file: %s" % err
+        return False
 
 
 def get_csv_header(fpath):
-    """ Get Header  from CSV file """
-    with open(fpath, 'r') as infile:
-        reader = csv.DictReader(infile)
-        fieldnames = reader.fieldnames
-    return fieldnames
+    """
+    Get Header from CSV file.
+
+    Parameters :
+    fpath : str
+        Path to csv file.
+    Return :
+    fieldnames : object
+        Header of csv file as array.
+    """
+    try:
+        with open(fpath, 'r') as infile:
+            reader = csv.DictReader(infile)
+            fieldnames = reader.fieldnames
+        return fieldnames
+    except (OSError, IOError) as err:
+        print "ERROR: Failed to get header from CSV file: %s" % err
+        return False
 
 
 def good_exit():
@@ -172,17 +192,18 @@ def bad_exit():
 
 def get_cur_time(date_time_format):
     """
-    
-    Parameters
-    ----------
+    Get current date-time accordance to date_time_format.
+
+    Parameters :
     date_time_format : str
         It cab be like '%Y%m%d_%H-%M'
 
-    Returns
-    -------
+    Returns :
     Returns current date_time as a string formatted
     according to date_time_format
-    
     """
-    date_time = datetime.now().strftime(date_time_format)
-    return date_time
+    if date_time_format:
+        date_time = datetime.now().strftime(date_time_format)
+        return date_time
+    else:
+        print "No Date/Time format"

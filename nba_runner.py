@@ -19,7 +19,7 @@ def main(fpath):
     log.debug(fpath)
     # To fix the break line verification in the end of csv file on start.
     # Uncomment line below
-    # add_new_line_csv(fpath)
+    # add_csv_string(fpath)
     statwork = NBAStats(fpath, log)
     statwork.main()
 
