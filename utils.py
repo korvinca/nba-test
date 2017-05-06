@@ -1,8 +1,7 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
 """
-nba_utils
-TODO Create Class for initiate  variables
+utils
 @author:     Ivan K.
 @contact:    ivan.korolevskiy@gmail.com
 """
@@ -17,8 +16,24 @@ from datetime import datetime
 LOG_F = '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s: ' + '%(message)s'
 
 
-def initialize_logger(log_dir_name, logname, log_level):
-    """Initialize logger."""
+def initialize_logger(log_dir_name="logs", log_name="logname", log_level="INFO"):
+    """
+    Initialize logger.
+    
+    Parameters
+    ----------
+    log_dir_name : str
+        Name of directory for *.log files. Default is "logs"
+    log_name : str
+        Name of directory for *.log files. Default is "logname"
+    log_level : str
+        Log level. Default is "INFO"
+
+    Returns
+    -------
+    object
+        Log file as object for add the events.
+    """
     log_dir = os.path.join(os.getcwd(), log_dir_name)
     try:
         # Create directory
@@ -31,9 +46,9 @@ def initialize_logger(log_dir_name, logname, log_level):
         handler_stream.setFormatter(formatter)
         handler_stream.setLevel(logging.INFO)
         log.addHandler(handler_stream)
-        handler = logging.FileHandler(os.path.join(log_dir, logname + "_" +
-                                                   get_cur_time("%Y%m%d_%H-%M") +
-                                                   ".log"))
+        handler = logging.FileHandler(os.path.join(log_dir,
+                                                   log_name + "_" +
+                                                   get_cur_time("%Y%m%d_%H-%M") + ".log"))
         handler.setFormatter(formatter)
         log.addHandler(handler)
         logging.captureWarnings(True)
@@ -44,25 +59,62 @@ def initialize_logger(log_dir_name, logname, log_level):
         return False
 
 
-def create_dir(dpath):
-    """ Create a directory if it is not exist. """
-    try:
-        if not os.path.isdir(dpath):
-            os.makedirs(dpath)
-    except (OSError, IOError) as err:
-        # return -1 in case of exception
-        print "ERROR: Failed to create directory: %s" % err
-        return False
+def create_dir(dpath=None):
+    """
+    Create a directory if it is not exist.
+
+    Parameters
+    ----------
+    dpath : str
+        Full directory path in unix format
+
+    Returns
+    -------
+    False if Directory exist or cannot be created
+    """
+    if dpath:
+        try:
+            if not os.path.isdir(dpath):
+                os.makedirs(dpath)
+            else:
+                print "ERROR: Directory exist and cannot be created"
+        except (OSError, IOError) as err:
+            print "ERROR: Failed to create directory: %s" % err
+            return False
 
 
 def req_input(help_text):
-    """ Input handler. """
+    """
+    Input handler. 
+
+    Parameters
+    ----------
+    help_text : str
+        The text wil be printed as help to input.
+
+    Returns
+    -------
+    objreq : value
+        variable from input. 
+    """
     req = raw_input('Enter %s: ' % help_text)
     return req
 
 
 def get_csv_reader(fpath):
-    """Reader for CVS file """
+    """
+    Reader for CVS file
+
+    Parameters
+    ----------
+    fpath : str
+        Path to csv file.
+
+    Returns
+    -------
+    object : str 
+        body of csv file by string spited by ','
+    """
     with open(fpath, 'r') as infile:
         reader = csv.DictReader(infile, delimiter=',')
         file_obj = [x for x in reader]
@@ -70,7 +122,22 @@ def get_csv_reader(fpath):
 
 
 def get_csv_writer(fpath, val, new_string):
-    """Writer for CVS file """
+    """
+    Write to the CVS file a new string.
+
+    Parameters
+    ----------
+    fpath : str
+        Path to csv file.
+    val : str
+        'a' for append, 'b', or 'ab'
+    new_string : str
+        New string
+
+    Returns
+    -------
+        Write a new string and close the file.
+    """
     with open(fpath, val) as infile:
         writer = csv.writer(infile, delimiter=',')
         writer.writerow(new_string)
@@ -92,15 +159,30 @@ def get_csv_header(fpath):
 
 
 def good_exit():
-    """ Exit helper. """
+    """ Exit w/o exception and print: Goodbye!"""
     print "Goodbye!"
     sys.exit(0)
 
 
+def bad_exit():
+    """ Exit with exception and print: Something wrong! Goodbye!"""
+    print "Something wrong! Goodbye!"
+    sys.exit(1)
+
+
 def get_cur_time(date_time_format):
     """
+    
+    Parameters
+    ----------
+    date_time_format : str
+        It cab be like '%Y%m%d_%H-%M'
+
+    Returns
+    -------
     Returns current date_time as a string formatted
     according to date_time_format
+    
     """
     date_time = datetime.now().strftime(date_time_format)
     return date_time
