@@ -13,33 +13,32 @@ from nba_helper import NBAStats
 from utils import initialize_logger
 
 
-def main(fpath):
-    """test"""
-    log.info("Starting script")
-    log.debug(fpath)
-    # To fix the break line verification in the end of csv file on start.
-    # Uncomment line below
-    # add_csv_string(fpath)
-    statwork = NBAStats(fpath, log)
-    statwork.main()
-
-
 def parse_arg():
     """ Parsing -file *.CSV file. File should be located in the same dir."""
     desc = """Script performs NBA stats searching."""
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-f", "--file", default=False,
-                        required=True, help="Input file with NBA data")
+                        required=True, help="Input file with NBA data.")
     args = parser.parse_args()
-    fpath = args.file
+    path_to_file = args.file
     # Is file with data exist?
-    if not os.path.exists(fpath):
-        log.error("No file with data.")
+    if not os.path.exists(path_to_file):
+        LOG.error("No file with data.")
         sys.exit(1)
-    return fpath
+    return path_to_file
+
+
+def main(fpath):
+    """test"""
+    LOG.info("Starting script")
+    LOG.debug(fpath)
+    # To fix the break line verification in the end of csv file on start.
+    # Uncomment line below
+    # add_csv_string(fpath)
+    statwork = NBAStats(fpath, LOG)
+    statwork.main()
 
 
 if __name__ == '__main__':
-    log = initialize_logger("logs", "nba", "INFO")
-    fpath = parse_arg()
-    sys.exit(main(fpath))
+    LOG = initialize_logger("logs", "nba", "INFO")
+    sys.exit(main(parse_arg()))

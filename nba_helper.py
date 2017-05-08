@@ -39,26 +39,32 @@ class NBAStats(object):
         """
         nba_stat_local = ["FT", "MIN", "BL", "3P", "TOT", "FG", "3PA",
                           "DR", "OR", "TO", "PF", "PTS", "FGA", "A", "ST"]
-        print "Enter player name and stats: %s" % self.stats
-        new_player = req_input(help_text="")
-        if new_player:
-            new_string = []
-            nba_stat_local.insert(0, "PLAYER FULL NAME")
-            player_name = " ".join(map(str, new_player.split()[:-15:]))
-            player_stat = new_player.split()[-15:]
-            player_stat.insert(0, player_name)
-            new_dict = dict(zip(nba_stat_local, player_stat))
-            new_dict.update(CONSTDATA)
-            # Get header from CSV file
-            fieldnames = get_csv_header(self.fpath)
-            for header_items in fieldnames:
-                one_header = new_dict.get(header_items)
-                new_string.append(one_header)
+        help_text = 'Enter player name and stats: %s' % self.stats
+        player = req_input(help_text=help_text)
+        new_string = []
+        if not player:
+            print "No player name. Exit."
+        else:
+            new_player = player.split(" ")
+            if len(new_player) == 15:  # Not enough arguments or Name is skipped
+                print "No player name or incorrect 15-th stats. Try again."
+            elif len(new_player) > 15:
+                nba_stat_local.insert(0, "PLAYER FULL NAME")
+                player_name = " ".join(map(str, new_player[:-15:]))
+                player_stat = new_player[-15:]
+                player_stat.insert(0, player_name)
+                new_dict = dict(zip(nba_stat_local, player_stat))
+                new_dict.update(CONSTDATA)
+                fieldnames = get_csv_header(self.fpath)
+                for header_items in fieldnames:
+                    one_header = new_dict.get(header_items)
+                    new_string.append(one_header)
+            else:
+                new_string = [""] * 25
+                new_string.insert(2, player)
             # Append a new player in csv file
             add_csv_string(fpath=self.fpath, val='a', new_string=new_string)
-            print "Player %s has been added." % player_name
-        else:
-            print "No player name or incorrect stats."
+            print "Player %s has been added." % player
 
     def _team(self):
         """

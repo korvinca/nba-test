@@ -91,7 +91,13 @@ def req_input(help_text=None):
     objreq : value
         variable from input.
     """
-    req = raw_input('Enter %s: ' % help_text)
+    req = raw_input("Enter %s: " % help_text)
+    # while req is True:
+    #     if not req:
+    #         print 'Please enter "n" for exit or %s: ' % help_text
+    #     elif req is "n":
+    #         return False
+    #     else:
     return req
 
 
